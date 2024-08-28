@@ -1,0 +1,3 @@
+selenium==3.141.0
+pyshadow==0.0.4
+requests==2.25.1

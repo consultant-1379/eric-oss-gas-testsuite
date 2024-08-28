@@ -1,0 +1,38 @@
+modelVersion: 2.0
+
+docker-images:
+  - helm-dr-check: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/common-library-adp-helm-dr-check:latest
+  - adp-release-auto: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-adp-release-auto:latest
+
+properties:
+  - helm-chart-name: eric-oss-uds
+  - helm-chart-repo: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-so-gs-all-helm
+  - gerrit-url: https://gerrit.ericsson.se/plugins/gitiles/OSS/com.ericsson.oss.common.uds.service/uds-baseline
+ 
+var:
+  - version
+
+env:
+  - RELEASE (default=true)
+  - API_TOKEN (default=AKCp5Zkxbnwu5eezdN5AaY7SbZUx1rwEPfdohB9mJ38Zt6BUap4H7e8smvxCGz6JGpWSWH3kJ)
+  - PWD
+  - HELM_REPO_CREDENTIALS
+  - EO_GAS_URL
+  - EO_GAS_USERNAME
+  - EO_GAS_PASSWORD
+
+rules:
+  clean:
+    - task: rm
+      cmd:
+        - rm -rf .bob/
+        - rm -f artifact.properties
+
+  build:
+    - task: build
+      cmd:
+        - docker build -t gas-int-test --build-arg URL=${env.EO_GAS_URL} --build-arg USERNAME=${env.EO_GAS_USERNAME} --build-arg PASSWORD=${env.EO_GAS_PASSWORD} .
+  run:
+    - task: run
+      cmd:
+        - docker run --rm gas-int-test 
